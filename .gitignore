@@ -90,3 +90,9 @@ fastlane/test_output
 iOSInjectionProject/
 *.gitignore
 *.APIConstants.swift
+.DS_Store
+*.pbxproj
+*.xcworkspacedata
+*.plist
+*.json
+*.plist
