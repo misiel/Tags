@@ -30,12 +30,24 @@ class HomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        HomeViewModel.shared.$tagIsOpenState
+        HomeViewModel.shared.$tagWithChangedState
             .dropFirst()
-            .sink { [weak self] state in
+            .sink { [weak self] tag in
                 DispatchQueue.main.async {
-                    print("home")
-                    self?.tableView.reloadData()
+                    var indexPaths = [IndexPath]()
+                    guard let tagSection = self?.tags.firstIndex(of: tag) else {return}
+                    guard let taggedItems = self?.tags[tagSection].taggedItems else {return}
+                    for row in taggedItems.indices {
+                        let idxPath = IndexPath(row: row, section: tagSection)
+                        indexPaths.append(idxPath)
+                    }
+                                        
+                    if tag.isOpen {
+                        self?.tableView.insertRows(at: indexPaths, with: .fade)
+                    }
+                    else {
+                        self?.tableView.deleteRows(at: indexPaths, with: .fade)
+                    }
                 }
             }
             .store(in: &cancellables)
@@ -85,8 +97,8 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
         return cell
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let selectedCell = tableView.cellForRow(at: indexPath) as? DropDownCell else {return}
-        print("button tapped")
-    }
+//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//        guard let selectedCell = tableView.cellForRow(at: indexPath) as? DropDownCell else {return}
+//        print("button tapped")
+//    }
 }

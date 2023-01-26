@@ -10,9 +10,13 @@ import Combine
 class HomeViewModel {
     static let shared = HomeViewModel()
     
-    @Published var tagIsOpenState: Bool = false
+    @Published var tagWithChangedState: TagModel
     
-    func changeTagIsOpenState() {
-        self.tagIsOpenState = !self.tagIsOpenState
+    init() {
+        tagWithChangedState = TagModel(isOpen: false, title: "", taggedItems: [])
+    }
+    
+    func changeTagIsOpenState(tag: TagModel) {
+        self.tagWithChangedState = tag
     }
 }

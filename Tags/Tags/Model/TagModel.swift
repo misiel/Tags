@@ -7,7 +7,13 @@
 
 import UIKit
 
-class TagModel {
+class TagModel: Equatable {
+    static func == (lhs: TagModel, rhs: TagModel) -> Bool {
+        return
+            (lhs.title == rhs.title &&
+             lhs.taggedItems == rhs.taggedItems)
+    }
+    
     var isOpen: Bool
     var title: String
     var taggedItems: [String]

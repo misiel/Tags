@@ -71,6 +71,6 @@ class TagView: UIView {
         tagModel.isOpen = !isOpen
         
         dropDownButton.isSelected = tagModel.isOpen
-        HomeViewModel.shared.changeTagIsOpenState()
+        HomeViewModel.shared.changeTagIsOpenState(tag: tagModel)
     }
 }
