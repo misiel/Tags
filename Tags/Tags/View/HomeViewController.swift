@@ -8,7 +8,7 @@
 import Combine
 import UIKit
 
-class HomeViewController: UIViewController {
+class HomeViewController: ExtendedViewController {
     private var cancellables = Set<AnyCancellable>()
     
     lazy var tableView: UITableView =  {
@@ -51,10 +51,23 @@ class HomeViewController: UIViewController {
                 }
             }
             .store(in: &cancellables)
+        
+        HomeViewModel.shared.$selectedTag
+            .dropFirst()
+            .sink { [weak self] tag in
+                DispatchQueue.main.async {
+                    let vc = SelectedTagViewController()
+                    vc.selectedTag = tag
+                    self?.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
+            .store(in: &cancellables)
     }
     
 
     private func setupUI() {
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.title = "Tags"
         view.backgroundColor = .white
         view.addSubview(tableView)
         

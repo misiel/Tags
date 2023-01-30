@@ -11,12 +11,18 @@ class HomeViewModel {
     static let shared = HomeViewModel()
     
     @Published var tagWithChangedState: TagModel
+    @Published var selectedTag: TagModel
     
     init() {
         tagWithChangedState = TagModel(isOpen: false, title: "", taggedItems: [])
+        selectedTag = TagModel(isOpen: false, title: "", taggedItems: [])
     }
     
     func changeTagIsOpenState(tag: TagModel) {
         self.tagWithChangedState = tag
+    }
+    
+    func sendSelectedTag(tag: TagModel) {
+        self.selectedTag = tag
     }
 }
