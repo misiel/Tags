@@ -27,6 +27,14 @@ class SelectedTagViewController: ExtendedViewController {
         return cv
     }()
     
+    lazy var removeTagButton: UIButton = {
+        let button = UIButton(type: .system)
+        let image = UIImage(systemName: "xmark.app")
+        button.setImage(image, for: .normal)
+        button.addTarget(self, action: #selector(deleteTag), for: .touchUpInside)
+        return button
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -35,6 +43,7 @@ class SelectedTagViewController: ExtendedViewController {
     
     private func setupUI() {
         navigationItem.title = selectedTag.title
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: removeTagButton)
         navigationController?.navigationBar.prefersLargeTitles = true
         
         view.addSubview(collectionView)
@@ -44,6 +53,11 @@ class SelectedTagViewController: ExtendedViewController {
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10),
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10)
         ])
+    }
+    
+    @objc private func deleteTag() {
+        HomeViewModel.shared.deleteTag(tag: selectedTag)
+        navigationController?.popViewController(animated: true)
     }
 }
 

@@ -22,13 +22,23 @@ class HomeViewController: ExtendedViewController {
         return tv
     }()
     
-    let tags : [TagModel] =
-        [TagModel(isOpen: false, title: "Tag1", taggedItems: ["row1", "row2", "row3"]),
-         TagModel(isOpen: false, title: "Tag2", taggedItems: ["row1", "row2"]),
-         TagModel(isOpen: false, title: "Tag3", taggedItems: ["row1"])]
+    lazy var addTagButton: UIButton = {
+        let button = UIButton(type: .system)
+        let image = UIImage(systemName: "plus.app")
+        button.setImage(image, for: .normal)
+        button.addTarget(self, action: #selector(createTag), for: .touchUpInside)
+        return button
+    }()
+    
+//    let tags : [TagModel] =
+//        [TagModel(isOpen: false, title: "Tag1", taggedItems: [TaggedItem(title: "row1"), TaggedItem(title: "row2"), TaggedItem(title: "row3")]),
+//         TagModel(isOpen: false, title: "Tag2", taggedItems: [TaggedItem(title: "row1"), TaggedItem(title: "row2")]),
+//         TagModel(isOpen: false, title: "Tag3", taggedItems: [TaggedItem(title: "row1")])]
+    var tags : [TagModel] = Array(HomeViewModel.shared.getTags())
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("viewDidLoad")
         setupUI()
         HomeViewModel.shared.$tagWithChangedState
             .dropFirst()
@@ -62,11 +72,23 @@ class HomeViewController: ExtendedViewController {
                 }
             }
             .store(in: &cancellables)
+        
+        HomeViewModel.shared.$refreshTags
+            .dropFirst()
+            .sink { [weak self] tag in
+                print("We did something to tag so tableview should refresh")
+                DispatchQueue.main.async {
+                    self?.tags = Array(HomeViewModel.shared.getTags())
+                    self?.tableView.reloadData()
+                }
+            }
+            .store(in: &cancellables)
     }
     
 
     private func setupUI() {
         navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: addTagButton)
         navigationItem.title = "Tags"
         view.backgroundColor = .white
         view.addSubview(tableView)
@@ -77,6 +99,15 @@ class HomeViewController: ExtendedViewController {
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
+    }
+    
+    @objc private func createTag() {
+        // show popup that prompts user to make a title for a Tag
+        // Take text from tag and create a new Tag and save it to HomeViewModel
+        // refresh tableView
+        let createTagVC = CreateTagViewController()
+        createTagVC.modalPresentationStyle = .overCurrentContext
+        present(createTagVC, animated: true)
     }
 
 }
@@ -106,7 +137,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: DropDownCell.identifier, for: indexPath) as? DropDownCell else {return UITableViewCell()}
-        cell.title.text = tags[indexPath.section].taggedItems[indexPath.row]
+        cell.title.text = tags[indexPath.section].taggedItems[indexPath.row].title
         return cell
     }
     
