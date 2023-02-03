@@ -11,8 +11,15 @@ import UIKit
 class HomeViewController: ExtendedViewController {
     private var cancellables = Set<AnyCancellable>()
     
+    lazy var refreshControl : UIRefreshControl = {
+        let rc = UIRefreshControl()
+        rc.addTarget(self, action: #selector(refreshData), for: .valueChanged)
+        return rc
+    }()
+    
     lazy var tableView: UITableView =  {
         let tv = UITableView()
+        tv.refreshControl = refreshControl
         tv.translatesAutoresizingMaskIntoConstraints = false
         tv.delegate = self
         tv.dataSource = self
@@ -23,17 +30,40 @@ class HomeViewController: ExtendedViewController {
     }()
     
     lazy var addTagButton: UIButton = {
-        let button = UIButton(type: .system)
-        let image = UIImage(systemName: "plus.app")
+        let button = UIButton(type: .custom)
+        let image = UIImage(named: "plus")
         button.setImage(image, for: .normal)
+        button.widthAnchor.constraint(equalToConstant: 50).isActive = true
         button.addTarget(self, action: #selector(createTag), for: .touchUpInside)
         return button
     }()
     
-//    let tags : [TagModel] =
-//        [TagModel(isOpen: false, title: "Tag1", taggedItems: [TaggedItem(title: "row1"), TaggedItem(title: "row2"), TaggedItem(title: "row3")]),
-//         TagModel(isOpen: false, title: "Tag2", taggedItems: [TaggedItem(title: "row1"), TaggedItem(title: "row2")]),
-//         TagModel(isOpen: false, title: "Tag3", taggedItems: [TaggedItem(title: "row1")])]
+    lazy var refreshLabelBefore : UILabel = {
+        let rl = UILabel()
+        rl.translatesAutoresizingMaskIntoConstraints = false
+        rl.text = "Pull to refresh"
+        rl.textAlignment = .center
+        rl.font = UIFont.systemFont(ofSize: 14)
+        rl.textColor = .lightGray
+        return rl
+    }()
+    
+    lazy var refreshLabelAfter : UILabel = {
+        let rl = UILabel()
+        rl.translatesAutoresizingMaskIntoConstraints = false
+        rl.text = "Refreshing..."
+        rl.textAlignment = .center
+        rl.font = UIFont.systemFont(ofSize: 14)
+        rl.textColor = .lightGray
+        return rl
+    }()
+    
+/* Sample Data
+        let tags : [TagModel] =
+        [TagModel(isOpen: false, title: "Tag1", taggedItems: [TaggedItem(title: "row1"), TaggedItem(title: "row2"), TaggedItem(title: "row3")]),
+         TagModel(isOpen: false, title: "Tag2", taggedItems: [TaggedItem(title: "row1"), TaggedItem(title: "row2")]),
+        TagModel(isOpen: false, title: "Tag3", taggedItems: [TaggedItem(title: "row1")])]
+*/
     var tags : [TagModel] = Array(HomeViewModel.shared.getTags())
 
     override func viewDidLoad() {
@@ -85,19 +115,27 @@ class HomeViewController: ExtendedViewController {
             .store(in: &cancellables)
     }
     
-
     private func setupUI() {
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: addTagButton)
-        navigationItem.title = "Tags"
+        navigationItem.title = "TagIt!"
+        
         view.backgroundColor = .white
+        refreshControl.addSubview(refreshLabelAfter)
+        view.addSubview(refreshLabelBefore)
         view.addSubview(tableView)
         
         NSLayoutConstraint.activate([
             tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            
+            refreshLabelAfter.centerXAnchor.constraint(equalTo: refreshControl.centerXAnchor),
+            refreshLabelAfter.bottomAnchor.constraint(equalTo: refreshControl.bottomAnchor),
+            
+            refreshLabelBefore.topAnchor.constraint(equalTo: tableView.bottomAnchor),
+            refreshLabelBefore.centerXAnchor.constraint(equalTo: tableView.centerXAnchor)
         ])
     }
     
@@ -108,6 +146,15 @@ class HomeViewController: ExtendedViewController {
         let createTagVC = CreateTagViewController()
         createTagVC.modalPresentationStyle = .overCurrentContext
         present(createTagVC, animated: true)
+    }
+    
+    @objc private func refreshData() {
+        DispatchQueue.main.async {
+            self.tags = Array(HomeViewModel.shared.getTags())
+            self.tableView.reloadData()
+        }
+        print("data refreshed")
+        refreshControl.endRefreshing()
     }
 
 }

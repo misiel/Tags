@@ -9,13 +9,6 @@ import UIKit
 import Social
 import UniformTypeIdentifiers
 
-@objc(TagSelectionViewControllerDelegate)
-protocol TagSelectionViewControllerDelegate {
-    @objc optional func tagSelection(
-        _ sender: TagSelectionViewController,
-        selectedTag: String)
-}
-
 class ShareViewController: SLComposeServiceViewController, TagSelectionViewControllerDelegate {
     private let typeText = UTType.text.identifier
     private let typeURL = UTType.url.identifier
@@ -35,9 +28,9 @@ class ShareViewController: SLComposeServiceViewController, TagSelectionViewContr
     }()
     
     private func showTagSelection() {
-        let vc = TagSelectionViewController()
+        let vc = TagSelectionViewController(style: UITableView.Style.plain)
         vc.delegate = self
-        vc.listOfTags = self.listOfTags
+        vc.listOfTags = Array(self.listOfTags)
         pushConfigurationViewController(vc)
     }
     
@@ -63,6 +56,7 @@ class ShareViewController: SLComposeServiceViewController, TagSelectionViewContr
         if let content = extensionContext!.inputItems[0] as? NSExtensionItem {
             if let contents = content.attachments {
                 for attachment in contents {
+                    print("is didSelect getting called?")
                     saveAttachment(attachment: attachment, title: contentText)
                 }
             }
@@ -92,21 +86,27 @@ class ShareViewController: SLComposeServiceViewController, TagSelectionViewContr
         let imageType = typeImage
         let urlType = typeURL
         
+        print("save attach called")
         if attachment.hasItemConformingToTypeIdentifier(imageType) {
+            print("it was an image")
+
             attachment.loadItem(forTypeIdentifier: imageType, completionHandler: { data, error in
                 let url = data as! NSURL
-                if (!self.selectedTagName.isEmpty){
+                if (!self.selectedTagName.isEmpty || self.selectedTagName != "None"){
                     if let imageData = NSData(contentsOf: url as URL) {
                         let taggedItem = TaggedItem(title: title, data: imageData as Data)
+                        print("Item: \(taggedItem) and tagtitle \(self.selectedTagName) and data \(imageData)")
                         HomeViewModel.shared.saveTagWithItem(tagTitle: self.selectedTagName, withItem: taggedItem)
                     }
                 }
             })
         }
         else if attachment.hasItemConformingToTypeIdentifier(urlType) {
+            print("it was a url")
+
             attachment.loadItem(forTypeIdentifier: urlType, completionHandler: { data, error in
                 let url = data as! NSURL
-                if (!self.selectedTagName.isEmpty){
+                if (!self.selectedTagName.isEmpty || self.selectedTagName != "None"){
                     if let urlData = try? Data(contentsOf: url as URL) {
                         let taggedItem = TaggedItem(title: title, data: urlData)
                         HomeViewModel.shared.saveTagWithItem(tagTitle: self.selectedTagName, withItem: taggedItem)

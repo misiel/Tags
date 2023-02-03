@@ -39,18 +39,20 @@ class HomeViewModel {
     }
     
     func saveTag(tagTitle: String) {
-        let tag = TagModel(isOpen: false, title: tagTitle, taggedItems: [])
+        let tag = TagModel(isOpen: false, title: tagTitle.lowercased(), taggedItems: [])
         var savedTags = self.getTags()
         savedTags.insert(tag)
         let encodedList = try! encoder.encode(savedTags)
         defaults.set(encodedList, forKey: saved_tags_key)
         
+        print("save tag ")
+
         // tell HomeVC to refresh tags after modify
         self.refreshTags = ()
     }
     
     func saveTagWithItem(tagTitle: String, withItem newItem: TaggedItem) {
-        let tag = TagModel(isOpen: false, title: tagTitle, taggedItems: [newItem])
+        let tag = TagModel(isOpen: false, title: tagTitle.lowercased(), taggedItems: [newItem])
         var savedTags = self.getTags()
         if (savedTags.contains(tag)) {
             // Our set only compares Tags on their titles so this will give us the previous saved tag with same title
@@ -63,6 +65,7 @@ class HomeViewModel {
         let encodedList = try! encoder.encode(savedTags)
         defaults.set(encodedList, forKey: saved_tags_key)
         
+        print("save tag with item")
         // tell HomeVC to refresh tags after modify
         self.refreshTags = ()
     }
@@ -73,6 +76,8 @@ class HomeViewModel {
         let encodedList = try! encoder.encode(savedTags)
         defaults.set(encodedList, forKey: saved_tags_key)
         
+        print("delete tag")
+
         // tell HomeVC to refresh tags after modify
         self.refreshTags = ()
     }

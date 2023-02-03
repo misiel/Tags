@@ -29,7 +29,8 @@ class SelectedTagViewController: ExtendedViewController {
     
     lazy var removeTagButton: UIButton = {
         let button = UIButton(type: .system)
-        let image = UIImage(systemName: "xmark.app")
+        let image = UIImage(named: "close")
+        button.widthAnchor.constraint(equalToConstant: 50).isActive = true
         button.setImage(image, for: .normal)
         button.addTarget(self, action: #selector(deleteTag), for: .touchUpInside)
         return button
