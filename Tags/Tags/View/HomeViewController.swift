@@ -58,6 +58,31 @@ class HomeViewController: ExtendedViewController {
         return rl
     }()
     
+    lazy var emptyText : UITextView = {
+        let tv = UITextView()
+        tv.translatesAutoresizingMaskIntoConstraints = false
+        
+        let shareImageAttachment = NSTextAttachment()
+        shareImageAttachment.image = UIImage(systemName: "square.and.arrow.up")
+        let attributedStringWithShareImage = NSAttributedString(attachment: shareImageAttachment)
+        let addTagImageAttachment = NSTextAttachment()
+        addTagImageAttachment.image = UIImage(systemName: "plus.app")
+        let attributedStringWithAddImage = NSAttributedString(attachment: addTagImageAttachment)
+
+        let text = "You have no saved items. To save, click the "
+        let attributedString = NSMutableAttributedString(string: text)
+        attributedString.append(attributedStringWithShareImage)
+        let text2 = NSMutableAttributedString(string: " button and save to Tags.\n\nOr you can create Tags now and save to them later by pressing ")
+        attributedString.append(text2)
+        attributedString.append(attributedStringWithAddImage)
+        
+        attributedString.addAttribute(.foregroundColor, value: UIColor.gray, range: NSRange(location: 0, length: attributedString.length))
+        attributedString.addAttribute(.font, value: UIFont.systemFont(ofSize: 24), range: NSRange(location: 0, length: attributedString.length))
+
+        tv.attributedText = attributedString
+        return tv
+    }()
+    
 /* Sample Data
         let tags : [TagModel] =
         [TagModel(isOpen: false, title: "Tag1", taggedItems: [TaggedItem(title: "row1"), TaggedItem(title: "row2"), TaggedItem(title: "row3")]),
@@ -68,7 +93,6 @@ class HomeViewController: ExtendedViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("viewDidLoad")
         setupUI()
         HomeViewModel.shared.$tagWithChangedState
             .dropFirst()
@@ -106,21 +130,33 @@ class HomeViewController: ExtendedViewController {
         HomeViewModel.shared.$refreshTags
             .dropFirst()
             .sink { [weak self] tag in
-                print("We did something to tag so tableview should refresh")
                 DispatchQueue.main.async {
                     self?.tags = Array(HomeViewModel.shared.getTags())
-                    self?.tableView.reloadData()
+                    if (self?.tags.count == 0) {
+                        self?.displayEmptyState()
+                    }
+                    else {
+                        self?.displayFullState()
+                        self?.tableView.reloadData()
+                    }
                 }
             }
             .store(in: &cancellables)
     }
     
-    private func setupUI() {
-        navigationController?.navigationBar.prefersLargeTitles = true
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: addTagButton)
-        navigationItem.title = "TagIt!"
+    fileprivate func displayEmptyState() {
+        view.addSubview(emptyText)
         
-        view.backgroundColor = .white
+        NSLayoutConstraint.activate([
+            emptyText.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 100),
+            emptyText.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -100),
+            emptyText.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 100),
+            emptyText.widthAnchor.constraint(equalToConstant: 500),
+            emptyText.heightAnchor.constraint(equalToConstant: 500),
+        ])
+    }
+    
+    fileprivate func displayFullState() {
         refreshControl.addSubview(refreshLabelAfter)
         view.addSubview(refreshLabelBefore)
         view.addSubview(tableView)
@@ -139,12 +175,28 @@ class HomeViewController: ExtendedViewController {
         ])
     }
     
+    private func setupUI() {
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: addTagButton)
+        navigationItem.title = "TagIt!"
+        
+        view.backgroundColor = .white
+        
+        // Display Hint Text if we have no tags
+        if (tags.isEmpty) {
+            displayEmptyState()
+        }
+        else {
+            displayFullState()
+        }
+    }
+    
     @objc private func createTag() {
         // show popup that prompts user to make a title for a Tag
         // Take text from tag and create a new Tag and save it to HomeViewModel
         // refresh tableView
         let createTagVC = CreateTagViewController()
-        createTagVC.modalPresentationStyle = .overCurrentContext
+        createTagVC.modalPresentationStyle = .overFullScreen
         present(createTagVC, animated: true)
     }
     
@@ -153,7 +205,6 @@ class HomeViewController: ExtendedViewController {
             self.tags = Array(HomeViewModel.shared.getTags())
             self.tableView.reloadData()
         }
-        print("data refreshed")
         refreshControl.endRefreshing()
     }
 
@@ -187,9 +238,4 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
         cell.title.text = tags[indexPath.section].taggedItems[indexPath.row].title
         return cell
     }
-    
-//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        guard let selectedCell = tableView.cellForRow(at: indexPath) as? DropDownCell else {return}
-//        print("button tapped")
-//    }
 }

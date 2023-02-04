@@ -45,8 +45,6 @@ class HomeViewModel {
         let encodedList = try! encoder.encode(savedTags)
         defaults.set(encodedList, forKey: saved_tags_key)
         
-        print("save tag ")
-
         // tell HomeVC to refresh tags after modify
         self.refreshTags = ()
     }
@@ -65,7 +63,6 @@ class HomeViewModel {
         let encodedList = try! encoder.encode(savedTags)
         defaults.set(encodedList, forKey: saved_tags_key)
         
-        print("save tag with item")
         // tell HomeVC to refresh tags after modify
         self.refreshTags = ()
     }
@@ -76,8 +73,6 @@ class HomeViewModel {
         let encodedList = try! encoder.encode(savedTags)
         defaults.set(encodedList, forKey: saved_tags_key)
         
-        print("delete tag")
-
         // tell HomeVC to refresh tags after modify
         self.refreshTags = ()
     }

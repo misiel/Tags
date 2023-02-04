@@ -16,7 +16,9 @@ class TagItemCustomCell: UICollectionViewCell {
     let title : UILabel = {
         let text = UILabel()
         text.translatesAutoresizingMaskIntoConstraints = false
-        text.font = UIFont.systemFont(ofSize: 18, weight: .heavy)
+        text.font = UIFont.systemFont(ofSize: 32, weight: .heavy)
+        text.textAlignment = .center
+        text.textColor = .white
         return text
     }()
     
@@ -31,17 +33,9 @@ class TagItemCustomCell: UICollectionViewCell {
     lazy var imageView: UIImageView = {
         let iv = UIImageView()
         iv.translatesAutoresizingMaskIntoConstraints = false
-        iv.frame = CGRect(x: 0, y: 0, width: 300, height: 200)
+        iv.contentMode = .scaleAspectFit
         return iv
     }()
-    
-    lazy var urlLabel: UILabel = {
-        let tv = UILabel()
-        tv.translatesAutoresizingMaskIntoConstraints = false
-        tv.font = UIFont.systemFont(ofSize: 14, weight: .light)
-        return tv
-    }()
-    
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -55,7 +49,6 @@ class TagItemCustomCell: UICollectionViewCell {
     private func setupUI() {
         containerView.addSubview(title)
         containerView.addSubview(imageView)
-        containerView.addSubview(urlLabel)
         contentView.addSubview(containerView)
         
         NSLayoutConstraint.activate([
@@ -66,14 +59,13 @@ class TagItemCustomCell: UICollectionViewCell {
             
             title.topAnchor.constraint(equalTo: containerView.topAnchor, constant: padding.top),
             title.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: padding.left),
+            title.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: padding.right),
             
             imageView.topAnchor.constraint(equalTo: title.bottomAnchor, constant: padding.top),
             imageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: padding.left),
             imageView.trailingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: padding.right),
-            
-            urlLabel.topAnchor.constraint(equalTo: title.bottomAnchor, constant: padding.top),
-            urlLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: padding.left),
-            urlLabel.trailingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: padding.right),
+            imageView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: padding.bottom-10),
+            imageView.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
         ])
     }
     
@@ -92,11 +84,6 @@ class TagItemCustomCell: UICollectionViewCell {
                 self.imageView.image = image
             }
         }
-        else {
-            if let url = URL(dataRepresentation: data, relativeTo: nil) {
-                // the data is a URL
-                urlLabel.text = url.relativeString
-            }
-        }
     }
+    
 }

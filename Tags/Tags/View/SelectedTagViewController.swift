@@ -15,7 +15,7 @@ class SelectedTagViewController: ExtendedViewController {
     lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.itemSize = CGSize(width: view.frame.size.width/2.2, height: view.frame.size.width/3)
+        layout.itemSize = CGSize(width: view.frame.size.width, height: view.frame.size.width/1.3)
         layout.sectionInset = UIEdgeInsets(top: 50, left: 10, bottom: 10, right: 10)
         
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)

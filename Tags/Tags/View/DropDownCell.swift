@@ -15,8 +15,15 @@ class DropDownCell: UITableViewCell {
         let title = UILabel()
         title.translatesAutoresizingMaskIntoConstraints = false
         title.textColor = .black
-        title.font = UIFont.systemFont(ofSize: 12)
+        title.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
         return title
+    }()
+    let containerView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = UIColor(red: 0, green: 0, blue: 1, alpha: 0.1)
+        view.layer.cornerRadius = 10
+        return view
     }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -29,13 +36,19 @@ class DropDownCell: UITableViewCell {
     }
     
     private func setupUI() {
-        contentView.addSubview(title)
+        containerView.addSubview(title)
+        contentView.addSubview(containerView)
         
         NSLayoutConstraint.activate([
-            title.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: padding.top),
-            title.bottomAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor, constant: padding.bottom),
-            title.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor, constant: padding.right),
-            title.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor, constant: padding.left)
+            containerView.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor),
+            containerView.bottomAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor, constant: padding.bottom),
+            containerView.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor, constant: padding.left+20),
+            containerView.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor, constant: padding.right),
+            
+            title.topAnchor.constraint(equalTo: containerView.safeAreaLayoutGuide.topAnchor),
+            title.bottomAnchor.constraint(equalTo: containerView.safeAreaLayoutGuide.bottomAnchor),
+            title.trailingAnchor.constraint(equalTo: containerView.safeAreaLayoutGuide.trailingAnchor, constant: padding.right),
+            title.leadingAnchor.constraint(equalTo: containerView.safeAreaLayoutGuide.leadingAnchor, constant: padding.left)
         ])
     }
 }

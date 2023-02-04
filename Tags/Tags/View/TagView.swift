@@ -17,7 +17,7 @@ class TagView: UIView {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.titleLabel?.font = UIFont.systemFont(ofSize: 24, weight: .medium)
-        button.titleLabel?.tintColor = .red
+        button.titleLabel?.tintColor = .black
         button.addTarget(self, action: #selector(goToSelectedTag), for: .touchUpInside)
         return button
     }()
@@ -35,6 +35,8 @@ class TagView: UIView {
     let leftTouchView : UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = UIColor(red: 0, green: 1, blue: 0, alpha: 0.2)
+        view.layer.cornerRadius = 20
         return view
     }()
     let rightTouchView : UIView = {
@@ -47,8 +49,9 @@ class TagView: UIView {
         sv.translatesAutoresizingMaskIntoConstraints = false
         sv.distribution = .fillEqually
         sv.axis = .horizontal
-        sv.backgroundColor = .lightGray
         sv.isUserInteractionEnabled = true
+        sv.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.2)
+        sv.layer.cornerRadius = 20
         return sv
     }()
     
@@ -90,13 +93,7 @@ class TagView: UIView {
             
             dropDownButton.topAnchor.constraint(equalTo: rightTouchView.topAnchor, constant: padding.top),
             dropDownButton.bottomAnchor.constraint(equalTo: rightTouchView.bottomAnchor, constant: padding.bottom),
-            dropDownButton.leadingAnchor.constraint(equalTo: rightTouchView.leadingAnchor, constant: padding.left + 50),
             dropDownButton.trailingAnchor.constraint(equalTo: rightTouchView.trailingAnchor, constant: padding.right),
-            
-//            leftTouchView.widthAnchor.constraint(equalToConstant: touchStackView.frame.width),
-//            leftTouchView.heightAnchor.constraint(equalToConstant: touchStackView.frame.height),
-//            rightTouchView.widthAnchor.constraint(equalToConstant: touchStackView.frame.width),
-//            rightTouchView.heightAnchor.constraint(equalToConstant: touchStackView.frame.height),
         ])
     }
     
