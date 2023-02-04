@@ -12,6 +12,8 @@ While working on **Tags**, I reused a couple of components that I learned in my 
 
 Once again the UI is pretty minimal as I was just using this project as a way to learn more things in iOS dev land, although I did implement a pretty nifty trick with the HomeViewController tableview (tappable section headers and disappearing rows). A big part of this app was the data persistence, updating the data correctly throughout the app and share extension and passing data amongst multiple surfaces.
 
+There's also a couple of TODO's sprinkled through the app of things I would like to implement, do in a different way or downright fix that I plan to get to hopefully in the future as I flesh this app a bit more! _(hopefully this doesn't enter the side project graveyard 🤣)_
+
 Here are some screenshots of different actions throughout the app:
 ### Home (empty state) |        Home (with tags)
 ![Simulator Screen Shot - iPhone 14 Pro - 2023-02-04 at 14 52 13](https://user-images.githubusercontent.com/23410589/216789067-efacec1b-8706-4f39-9339-5a12edcce139.png)![Simulator Screen Shot - iPhone 14 Pro - 2023-02-04 at 14 52 24](https://user-images.githubusercontent.com/23410589/216789216-5e552e0c-9067-4392-8e86-9e3b88a21176.png)
