@@ -3,7 +3,7 @@
 
 **Tags** is a side project idea that I completed in a little under 2 weeks after using apps like Pocket and Instapaper. I was curious on how these apps interact with the share sheet across different applications and are able to save images, URLs, text etc and display them to the user in a seamless way.
 
-While working on **Tags**, I reused a couple of components that I learned in my previous project like Combine, threading for UI updates, UITableView/UICollectionView customization and more. I also came across a bunch of newer learnings (Share Extension, Targets, App Group Containers, etc) that I would suggest you go check out in my blog () if you are curious! 
+While working on **Tags**, I reused a couple of components that I learned in my previous project like Combine, threading for UI updates, UITableView/UICollectionView customization and more. I also came across a bunch of newer learnings (Share Extension, Targets, App Group Containers, etc) that I would suggest you go check out in my blog (https://www.misiel.co/blog/tags_part_1) if you are curious! 
 
 - Sharing my iOS dev journey along with "building in public" has been a revitalizing approach that I have implemented that has kept me accountable and has taught me a ton as I work on these side projects - I recommend any newer dev to implement this approach to your journey and see how it improves your results.
 
